@@ -3,13 +3,20 @@
     version = "0.0.0"
     description = "WACOFFDataset"
     authors = [{ name = "graham", email = "graham.annett@gmail.com" }]
-    dependencies = [
-        "reflex>=0.5.2",
-    ]
-    requires-python = ">=3.12.*"
+    dependencies = ["reflex>=0.5.3"]
+    requires-python = ">=3.11"
     readme = "README.md"
     license = { text = "None" }
 
 
+[build-system]
+    requires = ["pdm-backend"]
+    build-backend = "pdm.backend"
+
+
 [tool.pdm]
-    distribution = false
+    distribution = true
+
+    [tool.pdm.build]
+        includes = ["scripts"]
+        source-includes = ["scripts"]
