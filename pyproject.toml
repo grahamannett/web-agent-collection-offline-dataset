@@ -13,10 +13,13 @@
     requires = ["pdm-backend"]
     build-backend = "pdm.backend"
 
-
 [tool.pdm]
     distribution = true
 
     [tool.pdm.build]
-        includes = ["scripts"]
-        source-includes = ["scripts"]
+        includes = ["scripts", "src/wac_lab"]
+        source-includes = ["scripts", "src/wac_lab"]
+
+    [tool.pdm.scripts]
+        info = { cmd = "which reflex" }
+        app = { cmd = "reflex run", working_dir = "src/wac_lab" }
