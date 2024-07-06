@@ -3,7 +3,7 @@ from wac_lab.components.navigation import navbar
 from wac_lab.templates.template import template
 
 
-@template(route="/health", title="health")
+@template(route="/health", title="health", meta=[{"drawer-icon": "heart-pulse"}])
 def health() -> rx.Component:
     return rx.box(
         rx.text("✅"),
@@ -12,7 +12,7 @@ def health() -> rx.Component:
     )
 
 
-@template(route="/settings", title="settings")
+@template(route="/settings", title="settings", meta=[{"drawer-icon": "settings-2"}])
 def settings() -> rx.Component:
     return rx.vstack(
         rx.box(

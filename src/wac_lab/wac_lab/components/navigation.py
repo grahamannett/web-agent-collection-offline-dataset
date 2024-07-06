@@ -1,5 +1,4 @@
 import reflex as rx
-from reflex.components import lucide
 from wac_lab import styles
 
 
@@ -32,12 +31,23 @@ def sidebar_link(text: str, href: str, icon: str):
     )
 
 
-def sidebar(*sidebar_links, use_lower: bool = False, **props) -> rx.Component:
-    heading = props.get("heading", "NOT SET")
-    logo_src = props.get("logo_src", "/favicon.ico")
+def sidebar(use_lower: bool = True):
+    logo_src = "/favicon.ico"
+    heading = "WAC Lab"
+
+    # should do this with get_decorated_pages later, the icon will be on the @template()
+    links_from = [
+        ["Home", "/", "paperclip"],
+        ["Tasks", "/tasks", "drama"],
+        ["Labeler", "/labeler", "tag"],
+        ["Settings", "/settings", "settings-2"],
+    ]
 
     if use_lower:
         heading = heading.lower()
+        links_from = [[name.lower(), href, icon] for name, href, icon in links_from]
+
+    sidebar_links = [sidebar_link(name, href, icon) for name, href, icon in links_from]
 
     return rx.box(
         rx.drawer.root(
@@ -77,46 +87,4 @@ def sidebar(*sidebar_links, use_lower: bool = False, **props) -> rx.Component:
             ),
             direction="right",
         ),
-    )
-
-
-dashboard_sidebar = sidebar(
-    sidebar_link(text="Home", href="/", icon="paperclip"),
-    sidebar_link(text="Tasks", href="/tasks", icon="drama"),
-    sidebar_link(text="Labeler", href="/labeler", icon="tag"),
-    sidebar_link(text="Settings", href="/settings", icon="settings-2"),
-    logo_src="/favicon.ico",
-    heading="WAC Lab",
-    # styles=styles.drawer_style,
-)
-
-
-def navbar(heading: str, enable_menu: bool = False) -> rx.Component:
-    return rx.hstack(
-        rx.heading(heading, size="7"),
-        rx.spacer(),
-        rx.cond(
-            enable_menu,
-            rx.menu.root(
-                rx.menu.trigger(
-                    rx.button(
-                        "Menu",
-                        lucide.icon(tag="chevron_down", weight=16, height=16),
-                        variant="soft",
-                    ),
-                ),
-                rx.menu.content(
-                    rx.menu.item("Settings"),
-                    rx.menu.item("Profile"),
-                    rx.menu.item("Logout"),
-                    variant="soft",
-                ),
-                variant="soft",
-            ),
-        ),
-        position="absolute",
-        z_index="1000",
-        top="0px",
-        right="20%",
-        padding_top="4em",
     )

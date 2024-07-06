@@ -1,3 +1,7 @@
+import os
+
+ROOT_DIR = os.environ.get("ROOT_DIR", "/Users/graham/code/clippy")
+
 LEN_SHORT = 8
 LEN_LONG = 50
 

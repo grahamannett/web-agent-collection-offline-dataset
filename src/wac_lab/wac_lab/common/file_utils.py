@@ -1,4 +1,5 @@
 import json
+from functools import cache
 from pathlib import Path
 from typing import List
 
@@ -52,6 +53,7 @@ def get_task_file_path(
     return str(filepath.resolve())
 
 
+@cache
 def load_task_json_file(
     filepath: str = None, id: str = None, get_path_func=None
 ) -> dict:

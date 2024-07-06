@@ -2,70 +2,55 @@
 
 import reflex as rx
 
-from wac_lab import logger
-from wac_lab.pages.routes import health, settings
-from wac_lab.pages.tasks import tasks
+from wac_lab import styles
+from wac_lab.components.navigation import navbar
 from wac_lab.state import WACState
-
-from wac_lab.template import template
-from wac_lab.navigation import navbar
-from wac_lab.styles import THEME, STYLESHEETS
-
-
-@rx.page("/tasks/[task_id]")
-def task_id_page() -> rx.Component:
-    return rx.heading(WACState.task_id)
+from wac_lab.templates.template import template
 
 
 def index_buttons() -> rx.Component:
-    return rx.box(
-        rx.heading("quick actions"),
-        rx.flex(
-            rx.divider(orientation="vertical", border_color="black"),
-            rx.spacer(),
-            rx.flex(
-                rx.button("auto-generate", disabled=True),
-                rx.divider(orientation="vertical", border_color="black"),
-                rx.button("latest task", on_click=rx.redirect("tasks/current")),
-                rx.divider(orientation="vertical", border_color="black"),
-                rx.button("download tasks", on_click=WACState.download_tasks),
-                spacing="3",
+    return rx.container(
+        rx.box(
+            rx.section(
+                rx.heading("quick actions"),
+                rx.flex(
+                    rx.button("auto-generate", disabled=True),
+                    rx.button("latest task", on_click=rx.redirect("tasks/current")),
+                    rx.button("download tasks", on_click=WACState.download_tasks),
+                    spacing="3",
+                    justify="end",
+                ),
             ),
         ),
         rx.box(
-            rx.heading("other"),
-            rx.flex(
-                rx.spacer(),
-                rx.button("tasks", on_click=rx.redirect("/tasks")),
-                rx.divider(orientation="vertical", border_color="black"),
-                rx.button("health", on_click=rx.redirect("/health")),
-                rx.divider(orientation="vertical", border_color="black"),
-                rx.button("settings", on_click=rx.redirect("/settings")),
-                spacing="3",
-            ),
-            margin_top="2em",
+            rx.section(
+                rx.heading("other"),
+                rx.flex(
+                    rx.button("tasks", on_click=rx.redirect("/tasks")),
+                    rx.divider(orientation="vertical", border_color="black"),
+                    rx.button("health", on_click=rx.redirect("/health")),
+                    rx.divider(orientation="vertical", border_color="black"),
+                    rx.button("settings", on_click=rx.redirect("/settings")),
+                    spacing="3",
+                    justify="end",
+                ),
+                margin_top="2em",
+            )
         ),
+        width="80%",
     )
 
 
-@template
+@template(route="/", title="index")
 def index() -> rx.Component:
     return rx.box(
-        navbar(heading="index"),
         index_buttons(),
-        # align="center",
+        navbar(heading="HEYO", enable_menu=True),
         margin_top="10%",
-        margin_x="25vw",
-        padding="1em",
     )
 
 
 app = rx.App(
-    theme=THEME,
-    stylesheets=STYLESHEETS,
+    style=styles.base_style,
+    stylesheets=styles.base_stylesheets,
 )
-
-app.add_page(index, route="/")
-app.add_page(health, route="/health")
-app.add_page(settings, route="/settings")
-app.add_page(tasks, route="/tasks")
