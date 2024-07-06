@@ -10,13 +10,3 @@ def health() -> rx.Component:
         margin_x="49%",
     )
 
-
-@template(route="/settings", title="settings", meta=[{"drawer-icon": "settings-2"}])
-def settings() -> rx.Component:
-    return rx.vstack(
-        rx.box(
-            margin_top="5em",
-            margin_x="25vw",
-            padding="1em",
-        ),
-    )

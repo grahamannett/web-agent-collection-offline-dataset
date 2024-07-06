@@ -14,7 +14,6 @@ class TaskButton(rx.ComponentState):
             cls.__fields__["task_folder"].default = task_folder
 
         return rx.box(
-            # rx.text("Status"),
             rx.button(rx.text(f"Task {task_folder}", **props), width="100%"),
             on_click=rx.redirect(f"/task/{task_folder}"),
             width="100%",

@@ -1,5 +1,5 @@
 import reflex as rx
-from wac_lab.state import WACState
+from wac_lab.state.state import WACState
 
 
 def home_quick_buttons() -> rx.Component:
@@ -8,7 +8,7 @@ def home_quick_buttons() -> rx.Component:
             rx.section(
                 rx.heading("quick actions"),
                 rx.flex(
-                    rx.button("auto-generate", disabled=True),
+                    rx.button("auto-generate", on_click=rx.redirect("newtask")),
                     rx.button("latest task", on_click=rx.redirect("tasks/current")),
                     rx.button("download tasks", on_click=WACState.download_tasks),
                     spacing="3",

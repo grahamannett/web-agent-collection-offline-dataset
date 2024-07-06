@@ -8,9 +8,10 @@ from wac_lab.common.file_utils import get_tasks, load_task_json_file, truncate_s
 from wac_lab.datatypes import approval_status
 
 
-class ExternalDataset(rx.State):
+class ExternalDataset(rx.Base):
     loaded: bool = False
-    name: str = ""
+    dataset_name: str = ""
+    short_name: str = ""
 
 
 class WACState(rx.State):
@@ -18,7 +19,12 @@ class WACState(rx.State):
 
     sort_by: str = "name"
     sort_direction: str = "descending"
-    external_tasks: dict[str, ExternalDataset] = {}
+    external_datasets: dict[str, ExternalDataset] = {
+        "mind2web": ExternalDataset(
+            dataset_name="osunlp/Multimodal-Mind2Web",
+            short_name="mind2web",
+        ),
+    }
 
     @rx.cached_var
     def tasks(self) -> list[str]:
@@ -96,15 +102,6 @@ class TaskState(rx.State):
         self.timestamp = timestamp
         self.timestamp_short = datetime.fromisoformat(timestamp).strftime("%m-%d %H:%M")
 
-    def load_task(self):
-        # self.filepath = self.get_filepath()
-        _raw_data = load_task_json_file(filepath=self.task_filepath)
-        self.objective = _raw_data["objective"]
-        self._setup_id(_raw_data["id"])
-        self._setup_timestamp(_raw_data["timestamp"])
-        self._load_steps(_raw_data["steps"])
-        self.loaded = True
-
     def _load_steps(self, steps: list[dict]):
         def get_act(d_idx, d):
             action_type = d["action_type"]
@@ -146,3 +143,16 @@ class TaskState(rx.State):
                     ],
                 )
             )
+
+    def load_task(self):
+        # self.filepath = self.get_filepath()
+        _raw_data = load_task_json_file(filepath=self.task_filepath)
+        self.objective = _raw_data["objective"]
+        self._setup_id(_raw_data["id"])
+        self._setup_timestamp(_raw_data["timestamp"])
+        self._load_steps(_raw_data["steps"])
+        self.loaded = True
+
+    def update_task_id(self, status: str, task_id: str):
+        logger.info(f"should update: {task_id} to {status}")
+

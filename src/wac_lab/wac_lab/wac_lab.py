@@ -2,10 +2,18 @@
 
 import reflex as rx
 
-from wac_lab import styles
+from wac_lab import pages, styles
 from wac_lab.components.home_components import home_quick_buttons
 from wac_lab.templates.template import template
-from wac_lab.pages import tasks_page, task_id_page, health, settings
+
+
+class WACApp(rx.App):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.setup_pages()
+
+    def setup_pages(self):
+        pages.api_setup(self)
 
 
 @template(route="/", title="home")
@@ -16,7 +24,7 @@ def index() -> rx.Component:
     )
 
 
-app = rx.App(
+app = WACApp(
     style=styles.base_style,
     stylesheets=styles.base_stylesheets,
 )

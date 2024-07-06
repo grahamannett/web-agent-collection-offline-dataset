@@ -14,6 +14,10 @@ default_meta = [
     },
 ]
 
+TEMPLATED_ROUTES = []
+BACKEND_ROUTES = []
+WS_BACKEND_ROUTES = []
+
 
 class ThemeState(rx.State):
     """The state for the theme of the app.
@@ -75,5 +79,14 @@ def template(
             )
 
         return theme_wrap
+
+    return decorator
+
+
+def attach_backend(route: str, ws: bool = False):
+    routes_holder = WS_BACKEND_ROUTES if ws else BACKEND_ROUTES
+
+    def decorator(handler: callable) -> rx.Component:
+        routes_holder.append((route, handler))
 
     return decorator

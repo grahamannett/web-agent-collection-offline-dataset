@@ -27,7 +27,8 @@ def sidebar_link(text: str, href: str, icon: str):
                 variant="soft",
             ),
             text,
-            # no idea what py and px actually are impacting.  seems like it is based on tailwind css but adjusting these values i see no change
+            # no idea what py and px actually are impacting.
+            # seems like it is based on tailwind css but adjusting these values i see no change
             py="2",
             px="4",
             spacing="3",  # spacing between button and text

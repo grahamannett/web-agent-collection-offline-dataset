@@ -1,7 +1,7 @@
 import reflex as rx
 from wac_lab.components.component_states import task_button
 from wac_lab.components.task_components import task_header_card, task_step_card
-from wac_lab.state import TaskState, WACState
+from wac_lab.state.state import TaskState, WACState
 from wac_lab.templates.template import template
 
 
