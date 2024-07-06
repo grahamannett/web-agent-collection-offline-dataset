@@ -6,7 +6,7 @@ from wac_lab.templates.template import template
 
 
 @template(route="/tasks", title="tasks")
-def tasks() -> rx.Component:
+def tasks_page() -> rx.Component:
     return rx.box(
         rx.heading("tasks", margin_bottom="1em"),
         rx.flex(
@@ -23,7 +23,7 @@ def tasks() -> rx.Component:
 
 
 @template(route="/task/[task_id]", title="task", on_load=TaskState.load_task)
-def task_task_id() -> rx.Component:
+def task_id_page() -> rx.Component:
     return rx.container(
         task_header_card(task_state=TaskState),
         rx.container(rx.foreach(TaskState.steps, task_step_card)),

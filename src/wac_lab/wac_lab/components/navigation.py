@@ -2,6 +2,19 @@ import reflex as rx
 from wac_lab import styles
 
 
+def back_button_top_right() -> rx.Component:
+    return (
+        rx.button(
+            "🔙",
+            on_click=rx.call_script("history.back()"),
+            variant="soft",
+            top="0",
+            left="3em",
+            position="absolute",
+        ),
+    )
+
+
 def sidebar_link(text: str, href: str, icon: str):
     return rx.link(
         rx.flex(

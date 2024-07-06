@@ -33,34 +33,19 @@ class ThemeState(rx.State):
     has_background: bool = True
 
 
-def back_button_top_right() -> rx.Component:
-    return (
-        rx.button(
-            "🔙",
-            on_click=rx.call_script("history.back()"),
-            variant="soft",
-            top="0",
-            left="3em",
-            position="absolute",
-        ),
-    )
-
-
 def template(
     route: str | None = None,
     title: str | None = None,
     description: str | None = None,
-    meta: str | None = None,
+    meta: str | dict | None = None,
     script_tags: list[rx.Component] | None = None,
     on_load: rx.event.EventHandler | list[rx.event.EventHandler] | None = None,
-    include_back_button: bool = False,
 ) -> Callable[[Callable[[], rx.Component]], rx.Component]:
     def decorator(page_content: Callable[[], rx.Component]) -> rx.Component:
         all_meta = [*default_meta, *(meta or [])]
 
         def templated_page():
             return rx.box(
-                rx.cond(include_back_button, back_button_top_right()),
                 sidebar(),
                 rx.container(
                     page_content(),
@@ -84,7 +69,7 @@ def template(
                 accent_color=ThemeState.accent_color,
                 gray_color=ThemeState.gray_color,
                 radius=ThemeState.radius,
-                # scaling=ThemeState.scaling,
+                scaling=ThemeState.scaling,
                 appearance=ThemeState.appearance,
                 panel_background=ThemeState.panel_background,
             )

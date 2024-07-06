@@ -1,5 +1,4 @@
 import reflex as rx
-from wac_lab.components.navigation import navbar
 from wac_lab.templates.template import template
 
 
@@ -16,7 +15,6 @@ def health() -> rx.Component:
 def settings() -> rx.Component:
     return rx.vstack(
         rx.box(
-            navbar(heading="settings"),
             margin_top="5em",
             margin_x="25vw",
             padding="1em",

@@ -1,7 +1,6 @@
 import reflex as rx
-
-from wac_lab.state import TaskState
 from wac_lab import styles
+from wac_lab.state import StepActionInfo, TaskState, TaskStepInfo
 
 
 def status_button(name: str) -> rx.Component:
@@ -30,7 +29,7 @@ def task_delete_button(task_id: str = None) -> rx.Component:
                 ),
             ),
         ),
-        style=status_button_style,
+        style=styles.task_status_button_style,
     )
 
 
@@ -43,7 +42,8 @@ def task_status_buttons(task_id: str = None) -> rx.Component:
             status_button("Reset Status"),
             # task_delete_button(),
             spacing="3",
-            position="absolute",
+            margin="1em",
+            position="fixed",
             top="0",
             left="0",
         ),
@@ -95,10 +95,50 @@ def task_header_card(task_state: TaskState) -> rx.Component:
     )
 
 
-def task_step_card(task_step) -> rx.Component:
+def task_step_card(task_step: TaskStepInfo) -> rx.Component:
     return rx.box(
         rx.container(
-            rx.heading("url"),
-            rx.text(task_step.url),
+            rx.hstack(
+                rx.heading("url"),
+                rx.spacer(),
+                rx.link(task_step.short_url, href=task_step.url),
+            ),
+            rx.flex(
+                rx.heading("id"),
+                rx.spacer(),
+                rx.text(task_step.short_id),
+            ),
+            rx.box(
+                rx.center(rx.image(src=task_step.image, height="auto")),
+                rx.accordion.root(
+                    rx.accordion.item(
+                        header=rx.heading(f"step {task_step.step_idx + 1}"),
+                        content=rx.box(
+                            rx.foreach(
+                                task_step.actions,
+                                lambda action: rx.list_item(action.clean_value),
+                            )
+                        ),
+                    ),
+                    collapsible=True,
+                    type="multiple",
+                    variant="outline",
+                    allow_toggle=True,
+                ),
+                rx.flex(
+                    rx.button(
+                        rx.heading("✔️", size="3"),  # alt-text ✅
+                        color_scheme="grass",
+                        size="3",
+                    ),
+                    rx.spacer(),
+                    rx.button(
+                        rx.heading("〤", size="3", color="black"),  # alt-text ❌
+                        color_scheme="crimson",
+                        size="3",
+                    ),
+                ),
+            ),
         ),
+        rx.divider(border_color="black"),
     )

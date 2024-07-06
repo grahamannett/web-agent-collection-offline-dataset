@@ -10,6 +10,15 @@ accent_text_color = rx.color("accent", 10)
 accent_color = rx.color("accent", 1)
 accent_mg_color = rx.color("accent", 2)
 accent_bg_color = rx.color("accent", 3)
+
+green_color = rx.color("green", 11)
+green_mg_color = rx.color("green", 2)
+green_bg_color = rx.color("green", 3)
+
+red_color = rx.color("red", 11)
+red_mg_color = rx.color("red", 2)
+red_bg_color = rx.color("red", 3)
+
 hover_accent_color = {"_hover": {"color": accent_text_color}}
 hover_accent_bg = {"_hover": {"background_color": accent_color}}
 # content_width_vw = "90vw"
@@ -51,7 +60,7 @@ drawer_button_style = {
     "border_radius": border_radius,  # "10px",
     "right": "1em",
     "top": "1em",
-    "position": "absolute",
+    "position": "fixed",
 }
 
 

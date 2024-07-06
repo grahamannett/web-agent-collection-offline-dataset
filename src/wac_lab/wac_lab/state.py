@@ -1,3 +1,4 @@
+from PIL import Image
 from datetime import datetime
 
 import reflex as rx
@@ -17,7 +18,7 @@ class WACState(rx.State):
 
     sort_by: str = "name"
     sort_direction: str = "descending"
-    external_tasks: list[ExternalDataset] = []
+    external_tasks: dict[str, ExternalDataset] = {}
 
     @rx.cached_var
     def tasks(self) -> list[str]:
@@ -27,9 +28,6 @@ class WACState(rx.State):
         if tasks[1].name == "current":
             tasks[0], tasks[1] = tasks[1], tasks[0]
         return [task.name for task in tasks]
-
-    def goto_task(self, task_id: str):
-        return rx.redirect(f"/tasks/{task_id}")
 
     def download_tasks(self):
         logger.info("Downloading tasks...")
@@ -48,11 +46,12 @@ class TaskStepInfo(rx.Base):
     step_idx: int = 0
     id: str = ""
     url: str = ""
-    image_path_web: str = ""
-    image_path_rel: str = ""
-    status: approval_status._ApprovalStatus = approval_status.
+    image_path: str = ""
+    image: Image.Image = None
 
-    actions: list[dict | StepActionInfo] = ""
+    status: approval_status._ApprovalStatus = approval_status.Approved
+
+    actions: list[StepActionInfo] = ""
 
     short_url: str = ""
     short_id: str = ""
@@ -107,10 +106,32 @@ class TaskState(rx.State):
         self.loaded = True
 
     def _load_steps(self, steps: list[dict]):
+        def get_act(d_idx, d):
+            action_type = d["action_type"]
+            action_value = clean_value = "unknown"
+            if action_type == "click":
+                action_value = f"pos({d['x']},{d['y']})"
+                clean_value = f"click at {action_value}"
+            elif action_type in ["type", "enter"]:
+                action_value = d["value"]
+                clean_value = "press enter"
+            elif action_type in ["input"]:
+                action_value = f'"{d["value"]}"'
+                clean_value = "type " + action_value
+
+            return StepActionInfo(
+                action_idx=d_idx,
+                action_type=d["action_type"],
+                action_value=action_value,
+                clean_value=clean_value,
+            )
+
         self.steps = []
         for step_idx, step_data in enumerate(steps):
-            image_path_web = f"{constants.IMAGE_ASSETS}/{self.id}/{step_data['id']}.{constants.IMAGE_EXT}"
-            image_path_rel = f"{constants.ROOT_DIR}/data/tasks/{self.id}/{step_data['id']}.{constants.IMAGE_EXT}"
+            image_path = f"{constants.ROOT_DIR}/data/tasks/{self.id}/{step_data['id']}.{constants.IMAGE_EXT}"
+            image = Image.open(image_path)
+            image_size = image.size
+            image = image.crop((0, 0, image_size[0], min(image_size[1], 1080)))
             self.steps.append(
                 TaskStepInfo(
                     step_idx=step_idx,
@@ -118,7 +139,10 @@ class TaskState(rx.State):
                     id=step_data["id"],
                     short_url=truncate_string(step_data["url"], constants.LEN_LONG),
                     short_id=truncate_string(step_data["id"], constants.LEN_LONG),
-                    image_path_web=image_path_web,
-                    image_path_rel=image_path_rel,
+                    image_path=image_path,
+                    image=image,
+                    actions=[
+                        get_act(di, d) for di, d in enumerate(step_data["actions"])
+                    ],
                 )
             )
