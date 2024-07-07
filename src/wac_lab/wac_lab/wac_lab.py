@@ -3,8 +3,8 @@
 import reflex as rx
 
 from wac_lab import pages, styles
-from wac_lab.components.home_components import home_quick_buttons
-from wac_lab.templates.template import template
+
+import importlib
 
 
 class WACApp(rx.App):
@@ -12,19 +12,23 @@ class WACApp(rx.App):
         super().__init__(*args, **kwargs)
         self.setup_pages()
 
+        if plugins := kwargs.get("plugins", None):
+            self.setup_plugins(plugins)
+
+    def setup_plugins(self, plugins: list[str, callable]):
+        for plugin in plugins:
+            if isinstance(plugin, str):
+                plugin = importlib.import_module(plugin)
+
+            if callable(plugin):
+                plugin(self)
+
     def setup_pages(self):
         pages.api_setup(self)
-
-
-@template(route="/", title="home")
-def index() -> rx.Component:
-    return rx.box(
-        home_quick_buttons(),
-        margin_top="10%",
-    )
 
 
 app = WACApp(
     style=styles.base_style,
     stylesheets=styles.base_stylesheets,
+    plugins=["wac_lab.plugins.clippy_controller"],
 )

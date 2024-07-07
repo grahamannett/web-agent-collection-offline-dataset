@@ -1,3 +1,4 @@
+from functools import wraps
 from typing import Callable
 
 import reflex as rx
@@ -83,10 +84,41 @@ def template(
     return decorator
 
 
-def attach_backend(route: str, ws: bool = False):
-    routes_holder = WS_BACKEND_ROUTES if ws else BACKEND_ROUTES
+def plugin_route(route: str, is_ws: bool = False, **kwargs):
+    """
+    Decorator function used to attach a backend route to the application.
 
-    def decorator(handler: callable) -> rx.Component:
-        routes_holder.append((route, handler))
+    Args:
+        route (str): The route path for the backend route.
+        is_ws (bool, optional): Indicates whether the route is a WebSocket route. Defaults to False.
+        **kwargs: Additional keyword arguments to be passed to the route configuration.
+
+    Returns:
+        Callable: The decorated function.
+
+    Example:
+        @plugin_route('/api/users', is_ws=False, methods=['GET'])
+        def get_users():
+            # Function implementation
+    """
+
+    def decorator(func: Callable):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            return func(*args, **kwargs)
+
+        route_config = {"path": route, "endpoint": wrapper, **kwargs}
+        routes_holder = WS_BACKEND_ROUTES if is_ws else BACKEND_ROUTES
+        routes_holder.append(route_config)
+
+        return wrapper
 
     return decorator
+
+
+def api_setup(app: rx.App):
+    for routes in WS_BACKEND_ROUTES:
+        app.api.add_api_websocket_route(**routes)
+
+    for routes in BACKEND_ROUTES:
+        app.api.add_api_route(**routes)

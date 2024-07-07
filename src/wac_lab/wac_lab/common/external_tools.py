@@ -37,6 +37,7 @@ def generate_from_cohere(
 
 
 if __name__ == "__main__":
+    # if you need to easily see the output of the generated tasks
     tasks = generate_from_cohere()
     for task in tasks:
         print(task)

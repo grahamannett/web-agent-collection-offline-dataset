@@ -1,7 +1,7 @@
 import reflex as rx
 
 from wac_lab import logger
-from wac_lab.common.api_utils import generate_from_cohere
+from wac_lab.common.external_tools import generate_from_cohere
 
 
 class LLMGeneratedTask(rx.Base):
