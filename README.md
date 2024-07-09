@@ -4,6 +4,8 @@ Originally from [clippy](https://github.com/grahamannett/clippy)
 
 This is the refactored version of the original web annotation tool and clippy integration
 
+![wac-start](docs/assets/wac-lab-start.jpeg)
+
 
 # Plugins
 
