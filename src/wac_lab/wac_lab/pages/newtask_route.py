@@ -1,6 +1,7 @@
 import reflex as rx
-from wac_lab.templates.template import template
+
 from wac_lab.state.running_task import RunTask
+from wac_lab.templates.template import template
 
 
 def newtask_running() -> rx.Component:
@@ -33,7 +34,7 @@ def newtask_buttons():
             rx.button("start task", on_click=RunTask.toggle_running_new_task),
         ),
     )
- 
+
 
 @template(
     route="/newtask",

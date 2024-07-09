@@ -1,6 +1,7 @@
 import reflex as rx
+
+from wac_lab.state.state import ExternalDataset, WACState
 from wac_lab.templates.template import template
-from wac_lab.state.state import WACState, ExternalDataset
 
 
 def dataset_popover(dataset_info_: tuple[str, ExternalDataset]) -> rx.Component:

@@ -30,5 +30,5 @@ class WACApp(rx.App):
 app = WACApp(
     style=styles.base_style,
     stylesheets=styles.base_stylesheets,
-    plugins=["wac_lab.plugins.clippy_controller"],
+    plugins=["wac_lab.plugins.clippy"],
 )

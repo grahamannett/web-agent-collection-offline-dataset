@@ -1,6 +1,26 @@
 from fastapi import WebSocket, WebSocketDisconnect
 
+import reflex as rx
 from wac_lab.templates.template import plugin_route
+from wac_lab.plugins.plugin import Plugin
+
+
+class ClippyPlugin(Plugin):
+    plugin_name: str = "clippy_plugin"
+    base_text_val = "nada"
+
+    class PluginState(rx.State):
+        running: bool = False
+
+    def home(self):
+        return rx.box(rx.heading("Clippy Plugin"), margin_top="10%")
+
+    def __call__(self):
+        return self.home()
+
+
+# dont instantiate if its rx.component
+ClippyPlugin = ClippyPlugin.setup()
 
 
 class ConnectionManager:

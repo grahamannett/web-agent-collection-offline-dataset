@@ -1,11 +1,11 @@
-from PIL import Image
 from datetime import datetime
 
 import reflex as rx
-
+from PIL import Image
 from wac_lab import constants, logger
 from wac_lab.common.file_utils import get_tasks, load_task_json_file, truncate_string
 from wac_lab.datatypes import approval_status
+from wac_lab.plugins.plugin import PluginManager
 
 
 class ExternalDataset(rx.Base):
@@ -26,7 +26,22 @@ class WACState(rx.State):
         ),
     }
 
-    @rx.cached_var
+    _plugin_manager = PluginManager
+
+    def load_plugin(self):
+        logger.info("loading plugin")
+
+    @rx.var
+    def plugins_available(self) -> rx.Component:
+        return list(self._plugin_manager.plugins.keys())
+
+    @rx.var
+    def plugin_name(self) -> str:
+        plugin_name = self.router.page.params.get("plugin_name", "no plugin name")
+        self.wacbase.set_plugin_value(plugin_name)
+        return plugin_name
+
+    @rx.var(cache=True)
     def tasks(self) -> list[str]:
         tasks = get_tasks(constants.TASKS_DIR)
         tasks.sort(key=lambda task: task.stat().st_ctime, reverse=True)
@@ -35,9 +50,16 @@ class WACState(rx.State):
             tasks[0], tasks[1] = tasks[1], tasks[0]
         return [task.name for task in tasks]
 
+    @rx.var
+    def top_page(self) -> rx.Component:
+        return rx.box(rx.heading("Welcome to WAC Lab!"))
+
     def download_tasks(self):
         logger.info("Downloading tasks...")
         return rx.download("tasks.zip", constants.TASKS_DIR)
+
+    def goto_plugin_home(self):
+        return rx.box(rx.heading("plugin-home"))
 
 
 class StepActionInfo(rx.Base):
@@ -66,7 +88,6 @@ class TaskStepInfo(rx.Base):
 class TaskState(rx.State):
     loaded: bool = False
 
-    # task_instance: WACSchema = None
     objective: str = ""
     id: str = ""
     short_id: str = ""
@@ -75,18 +96,17 @@ class TaskState(rx.State):
     timestamp_short: str = ""
 
     steps: list[dict | TaskStepInfo] = []
-    # steps: list[dict] = []
 
     @rx.var
     def task_id_name(self) -> str:
         no_tid = "no task id"
         return self.router.page.params.get("task_id", no_tid)
 
-    @rx.cached_var
+    @rx.var(cache=True)
     def task_dir(self):
         return f"{constants.TASKS_DIR}/{self.task_id_name}"
 
-    @rx.cached_var
+    @rx.var(cache=True)
     def task_filepath(self) -> str:
         return f"{constants.TASKS_DIR}/{self.task_id_name}/task.json"
 
@@ -155,4 +175,3 @@ class TaskState(rx.State):
 
     def update_task_id(self, status: str, task_id: str):
         logger.info(f"should update: {task_id} to {status}")
-
