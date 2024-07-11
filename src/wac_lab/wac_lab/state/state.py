@@ -4,7 +4,7 @@ import reflex as rx
 from PIL import Image
 from wac_lab import constants, logger
 from wac_lab.common.file_utils import get_tasks, load_task_json_file, truncate_string
-from wac_lab.datatypes import approval_status
+from wac_lab.datatypes import approval_status, task_types
 from wac_lab.plugins.plugin import PluginManager
 
 
@@ -62,29 +62,6 @@ class WACState(rx.State):
         return rx.box(rx.heading("plugin-home"))
 
 
-class StepActionInfo(rx.Base):
-    action_idx: int
-    action_type: str
-    action_value: str
-
-    clean_value: str = None
-
-
-class TaskStepInfo(rx.Base):
-    step_idx: int = 0
-    id: str = ""
-    url: str = ""
-    image_path: str = ""
-    image: Image.Image = None
-
-    status: approval_status._ApprovalStatus = approval_status.Approved
-
-    actions: list[StepActionInfo] = ""
-
-    short_url: str = ""
-    short_id: str = ""
-
-
 class TaskState(rx.State):
     loaded: bool = False
 
@@ -95,15 +72,14 @@ class TaskState(rx.State):
     timestamp: str = ""
     timestamp_short: str = ""
 
-    steps: list[dict | TaskStepInfo] = []
+    steps: list[dict | task_types.TaskStepInfo] = []
 
     @rx.var
     def task_id_name(self) -> str:
-        no_tid = "no task id"
-        return self.router.page.params.get("task_id", no_tid)
+        return self.router.page.params.get("task_id", "no task id")
 
     @rx.var(cache=True)
-    def task_dir(self):
+    def task_dir(self) -> str:
         return f"{constants.TASKS_DIR}/{self.task_id_name}"
 
     @rx.var(cache=True)
@@ -114,15 +90,15 @@ class TaskState(rx.State):
     def status(self) -> str:
         return approval_status.DefaultStatus.emoji
 
-    def _setup_id(self, task_id: str):
+    def _setup_id(self, task_id: str) -> None:
         self.id = task_id
         self.short_id = task_id[: constants.LEN_SHORT]
 
-    def _setup_timestamp(self, timestamp: str):
+    def _setup_timestamp(self, timestamp: str) -> None:
         self.timestamp = timestamp
         self.timestamp_short = datetime.fromisoformat(timestamp).strftime("%m-%d %H:%M")
 
-    def _load_steps(self, steps: list[dict]):
+    def _load_steps(self, steps: list[dict]) -> None:
         def get_act(d_idx, d):
             action_type = d["action_type"]
             action_value = clean_value = "unknown"
@@ -136,7 +112,7 @@ class TaskState(rx.State):
                 action_value = f'"{d["value"]}"'
                 clean_value = "type " + action_value
 
-            return StepActionInfo(
+            return task_types.StepActionInfo(
                 action_idx=d_idx,
                 action_type=d["action_type"],
                 action_value=action_value,
@@ -145,12 +121,12 @@ class TaskState(rx.State):
 
         self.steps = []
         for step_idx, step_data in enumerate(steps):
-            image_path = f"{constants.ROOT_DIR}/data/tasks/{self.id}/{step_data['id']}.{constants.IMAGE_EXT}"
+            image_path = f"{constants.TASKS_DIR}/{self.id}/{step_data['id']}.{constants.IMAGE_EXT}"
             image = Image.open(image_path)
             image_size = image.size
             image = image.crop((0, 0, image_size[0], min(image_size[1], 1080)))
             self.steps.append(
-                TaskStepInfo(
+                task_types.TaskStepInfo(
                     step_idx=step_idx,
                     url=step_data["url"],
                     id=step_data["id"],
@@ -165,7 +141,6 @@ class TaskState(rx.State):
             )
 
     def load_task(self):
-        # self.filepath = self.get_filepath()
         _raw_data = load_task_json_file(filepath=self.task_filepath)
         self.objective = _raw_data["objective"]
         self._setup_id(_raw_data["id"])

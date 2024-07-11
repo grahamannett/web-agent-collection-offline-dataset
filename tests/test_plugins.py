@@ -1,19 +1,40 @@
 import unittest
-from wac_lab.plugins import clippy_controller
+import asyncio
+from fastapi import FastAPI, WebSocket
+from fastapi.testclient import TestClient
+from threading import Thread
+from wac_lab.plugins.clippy import ConnectionManager, websocket_endpoint
+
+app = FastAPI()
+app.websocket_route("/ws/{client_id}")(websocket_endpoint)
 
 
-class TestPlugins(unittest.IsolatedAsyncioTestCase):
-    async def test_clippy(self):
-        import asyncio
-        from websockets.sync.client import connect
+class TestSendPersonalMessage(unittest.IsolatedAsyncioTestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.client = TestClient(app)
+        cls.server_thread = Thread(target=cls.client.__enter__)
+        cls.server_thread.start()
 
-        backend_route = "ws://localhost:8000/ws/clippy"
+    @classmethod
+    def tearDownClass(cls):
+        cls.client.__exit__(None, None, None)
+        cls.server_thread.join()
 
-        def send():
-            with connect(backend_route) as websocket:
-                websocket.send("Hello world!")
-                message = websocket.recv()
-                return message
+    async def test_send_personal_message(self):
+        async with self.client.websocket_connect("/ws/1") as websocket:
+            manager = ConnectionManager()
+            test_websocket = WebSocket(websocket=websocket, client=None)
+            await manager.connect(test_websocket)
+            message, url = "click(100, 500)", "https://url.com"
+            await manager.send_personal_message(message, test_websocket)
+            data = await websocket.receive_text()
+            self.assertIn(message, data)
+
+    async def asyncTearDown(self):
+        # Close any active connections to clean up after tests
+        for connection in ConnectionManager().active_connections:
+            await connection.close()
 
 
 if __name__ == "__main__":

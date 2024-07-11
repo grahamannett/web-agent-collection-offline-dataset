@@ -1,14 +1,11 @@
 import os
 
-ROOT_DIR = os.environ.get("ROOT_DIR", "/Users/graham/code/clippy")
+# old root dir of the example trajectory data
+DATA_DIR = os.path.expanduser(os.environ.get("DATA_DIR", f"{os.getcwd()}/data"))
+TASKS_DIR = os.environ.get("TASKS_DIR", f"{DATA_DIR}/tasks")
 
 LEN_SHORT = 8
 LEN_LONG = 50
-
-# TASKS_DIR = "assets/data/tasks"
-DATA_DIR = "/Users/graham/code/clippy/data"
-TASKS_DIR = f"{DATA_DIR}/tasks"
-IMAGE_ASSETS = "/data/tasks"
 
 IMAGE_EXT = "png"
 

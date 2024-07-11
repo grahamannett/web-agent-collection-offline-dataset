@@ -165,3 +165,4 @@ cython_debug/
 _ignore/
 
 *.env
+data/**

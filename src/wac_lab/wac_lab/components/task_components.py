@@ -1,6 +1,7 @@
 import reflex as rx
 from wac_lab import styles
-from wac_lab.state.state import TaskState, TaskStepInfo
+from wac_lab.datatypes.task_types import TaskStepInfo
+from wac_lab.state.state import TaskState
 
 
 def task_delete_button(task_id: str = None) -> rx.Component:

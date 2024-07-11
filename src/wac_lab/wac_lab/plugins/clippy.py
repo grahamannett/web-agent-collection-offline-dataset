@@ -2,24 +2,55 @@ from fastapi import WebSocket, WebSocketDisconnect
 
 import reflex as rx
 from wac_lab.templates.template import plugin_route
-from wac_lab.plugins.plugin import Plugin
+from wac_lab.plugins.plugin import Plugin, PluginManager
+from wac_lab.common.external_tools import generate_from_cohere
+
+
+class PluginState(rx.State):
+    running: bool = False
+    url: str = ""
+    last_action: str = ""
+    task: str = ""
+    generated_tasks: list[str] = []
+
+    def llm_gen_tasks(self):
+        self.generated_tasks = generate_from_cohere()
 
 
 class ClippyPlugin(Plugin):
     plugin_name: str = "clippy_plugin"
     base_text_val = "nada"
 
-    class PluginState(rx.State):
-        running: bool = False
+    def home(self) -> rx.Component:
+        return rx.box(
+            rx.heading("Clippy Plugin"),
+            rx.cond(
+                PluginState.running,
+                self.running_component(),
+                self.not_running_component(),
+            ),
+            margin_top="10%",
+        )
 
-    def home(self):
-        return rx.box(rx.heading("Clippy Plugin"), margin_top="10%")
+    def running_component(self) -> rx.Component:
+        return rx.box(
+            rx.heading("Clippy Plugin is running"),
+            rx.text("Last action: "),
+            rx.text(PluginState.last_action),
+            rx.text("Current URL: "),
+            rx.text(PluginState.url),
+        )
 
-    def __call__(self):
-        return self.home()
+    def not_running_component(self) -> rx.Component:
+        return rx.box(
+            rx.heading("Setup Clippy Plugin"),
+            rx.input(placeholder="Enter task", on_change=PluginState.set_task),
+            rx.button("Generate Task From LLM", on_click=PluginState.llm_gen_tasks),
+            rx.foreach(PluginState.generated_tasks, rx.button),
+        )
 
 
-# dont instantiate if its rx.component
+# this is so it wont instantiate if its rx.state but will otherwise
 ClippyPlugin = ClippyPlugin.setup()
 
 
