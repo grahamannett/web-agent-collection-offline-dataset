@@ -165,4 +165,6 @@ cython_debug/
 _ignore/
 
 *.env
-data/**
+example-data/**
+
+.mise.toml

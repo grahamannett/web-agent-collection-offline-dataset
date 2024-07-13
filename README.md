@@ -21,7 +21,7 @@ Example usage:
 ```bash
 # assuming you are in the wac-agent-collection-offline-dataset directory
 wget https://github.com/user-attachments/files/16169267/tasks-examples.zip && unzip tasks-examples.zip
-mkdir -p data && mv tasks-examples data/tasks
+mkdir -p example-data && mv tasks-examples example-data/tasks
 
-DATA_DIR=$PWD/data pdm run app
+DATA_DIR=$PWD/example-data pdm run app
 ```

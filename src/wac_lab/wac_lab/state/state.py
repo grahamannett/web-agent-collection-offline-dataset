@@ -5,7 +5,7 @@ from PIL import Image
 from wac_lab import constants, logger
 from wac_lab.common.file_utils import get_tasks, load_task_json_file, truncate_string
 from wac_lab.datatypes import approval_status, task_types
-from wac_lab.plugins.plugin import PluginManager
+from wac_lab.plugins.plugin_manager import PluginManager
 
 
 class ExternalDataset(rx.Base):

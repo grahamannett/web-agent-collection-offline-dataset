@@ -1,6 +1,6 @@
 import reflex as rx
 
-from wac_lab.plugins.plugin import PluginManager
+from wac_lab.plugins.plugin_manager import PluginManager
 from wac_lab.state.state import WACState
 from wac_lab.templates.template import template
 
