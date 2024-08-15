@@ -3,11 +3,15 @@
     version = "0.0.0"
     description = "WACOFFDataset"
     authors = [{ name = "graham", email = "graham.annett@gmail.com" }]
-    dependencies = ["reflex>=0.5.3"]
+    dependencies = [
+        "reflex>=0.5.7",
+        "pillow>=10.4.0",
+        "wac-lab @ file:///${PROJECT_ROOT}/src/wac_lab",
+    ]
     requires-python = ">=3.11"
     readme = "README.md"
     license = { text = "None" }
-
+    includes = ["src/wac_lab"]
 
 [build-system]
     requires = ["pdm-backend"]
@@ -15,10 +19,15 @@
 
 [tool.pdm]
     distribution = true
+    package-dir = "src/wac_lab"
 
     [tool.pdm.build]
         includes = ["scripts", "src/wac_lab"]
         source-includes = ["scripts", "src/wac_lab"]
+
+    [tool.pdm.packages]
+        # Define your packages with the path to the sources
+        packages = [{ include = "wac_lab", from = "src/wac_lab" }]
 
     [tool.pdm.scripts]
         info = { cmd = "which reflex" }
