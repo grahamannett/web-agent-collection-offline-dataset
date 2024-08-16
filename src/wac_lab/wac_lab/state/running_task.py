@@ -1,7 +1,6 @@
 import reflex as rx
-
-from wac_lab import logger
-from wac_lab.common.external_tools import generate_from_cohere
+from wac_lab.external_tools import generate
+from wacommon import log
 
 
 class LLMGeneratedTask(rx.Base):
@@ -17,7 +16,9 @@ class RunTask(rx.State):
     generated_tasks: list[LLMGeneratedTask] = []
 
     def generate_new_objective(self):
-        logger.info("regenerating...")
+        new_task = generate.generate_objective()
+        log.info(f"new objectives: {new_task}")
+        self.generated_tasks = [LLMGeneratedTask(objective=obj) for obj in new_task]
 
     def toggle_running_new_task(self):
         self.running = not self.running

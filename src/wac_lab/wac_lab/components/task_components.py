@@ -35,7 +35,7 @@ def task_status_buttons(task_id: str = "") -> rx.Component:
         return rx.button(
             status_str or status,
             style=styles.task_status_button_style,
-            on_click=lambda: TaskState.update_task_id(status, task_id),
+            on_click=lambda: TaskState.update_id_status(status, task_id),
             **props,
         )
 
@@ -101,6 +101,25 @@ def task_header_card(task_state: TaskState) -> rx.Component:
     )
 
 
+def step_status_change_buttons(task_step: TaskStepInfo) -> rx.Component:
+    _botton_props = {
+        "width": "30%",
+        "variant": "soft",
+    }
+
+    def _on_click(status: str):
+        return TaskState.update_id_status(status, task_step.id)
+
+    return rx.flex(
+        rx.button("Approve", on_click=_on_click("Approve"), **_botton_props),
+        rx.spacer(),
+        rx.button("Reject", on_click=_on_click("Rejct"), **_botton_props),
+        rx.spacer(),
+        rx.button("Remove", on_click=_on_click("Remove"), **_botton_props),
+        width="100%",
+    )
+
+
 def task_step_card(task_step: TaskStepInfo) -> rx.Component:
     return rx.box(
         rx.container(
@@ -116,9 +135,12 @@ def task_step_card(task_step: TaskStepInfo) -> rx.Component:
             ),
             rx.box(
                 rx.center(rx.image(src=task_step.image, height="auto")),
+                step_status_change_buttons(task_step),
                 rx.accordion.root(
                     rx.accordion.item(
-                        header=rx.heading(f"step {task_step.step_idx + 1}"),
+                        header=rx.hstack(
+                            rx.heading(f"step {task_step.step_idx + 1}"),
+                        ),
                         content=rx.box(
                             rx.foreach(
                                 task_step.actions,

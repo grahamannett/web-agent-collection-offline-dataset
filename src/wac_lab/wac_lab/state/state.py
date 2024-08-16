@@ -2,10 +2,13 @@ from datetime import datetime
 
 import reflex as rx
 from PIL import Image
-from wac_lab import constants, logger
+from wac_lab import constants
 from wac_lab.common.file_utils import get_tasks, load_task_json_file, truncate_string
 from wac_lab.datatypes import approval_status, task_types
 from wac_lab.plugins.plugin_manager import PluginManager
+from wacommon import log
+
+plugin_manager = PluginManager()
 
 
 class ExternalDataset(rx.Base):
@@ -26,10 +29,10 @@ class WACState(rx.State):
         ),
     }
 
-    _plugin_manager = PluginManager
+    _plugin_manager: PluginManager = plugin_manager
 
     def load_plugin(self):
-        logger.info("loading plugin")
+        log.info("loading plugin")
 
     @rx.var
     def plugins_available(self) -> rx.Component:
@@ -38,6 +41,7 @@ class WACState(rx.State):
     @rx.var
     def plugin_name(self) -> str:
         plugin_name = self.router.page.params.get("plugin_name", "no plugin name")
+        log.info(f"setting plugin name to {plugin_name}")
         self.wacbase.set_plugin_value(plugin_name)
         return plugin_name
 
@@ -55,7 +59,7 @@ class WACState(rx.State):
         return rx.box(rx.heading("Welcome to WAC Lab!"))
 
     def download_tasks(self):
-        logger.info("Downloading tasks...")
+        log.info("Downloading tasks...")
         return rx.download("tasks.zip", constants.TASKS_DIR)
 
     def goto_plugin_home(self):
@@ -73,6 +77,8 @@ class TaskState(rx.State):
     timestamp_short: str = ""
 
     steps: list[dict | task_types.TaskStepInfo] = []
+
+    _update_status_hooks: list[callable] = []
 
     @rx.var
     def task_id_name(self) -> str:
@@ -148,5 +154,5 @@ class TaskState(rx.State):
         self._load_steps(_raw_data["steps"])
         self.loaded = True
 
-    def update_task_id(self, status: str, task_id: str):
-        logger.info(f"should update: {task_id} to {status}")
+    def update_id_status(self, status: str, task_id: str):
+        log.info(f"update: {task_id} to {status}  {self._update_status_hooks}")

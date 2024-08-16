@@ -25,9 +25,10 @@ def newtask_buttons():
                 on_click=RunTask.generate_new_objective,
             ),
             rx.divider(orientation="vertical", size="4"),
-            rx.card("task1", on_click=RunTask.end_new_task),
+            rx.card("End", on_click=RunTask.end_new_task),
             spacing="3",
         ),
+        # put new tasks here if they are generated
         rx.divider(margin_bottom="1em", margin_top="5em"),
         rx.box(
             rx.heading("start"),

@@ -1,7 +1,7 @@
 import reflex as rx
 
-from wac_lab.plugins.plugin_manager import PluginManager
-from wac_lab.state.state import WACState
+# from wac_lab.plugins.plugin_manager import PluginManager
+from wac_lab.state.state import WACState, plugin_manager
 from wac_lab.templates.template import template
 
 
@@ -14,4 +14,4 @@ def plugin_home() -> rx.Component:
 
 @template(route="/plugin/[plugin_name]", title="plugin-name")
 def plugin_page() -> rx.Component:
-    return PluginManager.render_plugin(WACState.plugin_name, state_from=WACState)
+    return plugin_manager.render_plugin(WACState.plugin_name, state_from=WACState)
