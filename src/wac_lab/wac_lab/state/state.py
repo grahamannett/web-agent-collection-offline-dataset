@@ -5,6 +5,7 @@ from PIL import Image
 from wac_lab import constants
 from wac_lab.common.file_utils import get_tasks, load_task_json_file, truncate_string
 from wac_lab.datatypes import approval_status, task_types
+from wac_lab.models import StatusTable, TaskTable
 from wac_lab.plugins.plugin_manager import PluginManager
 from wacommon import log
 
@@ -140,9 +141,7 @@ class TaskState(rx.State):
                     short_id=truncate_string(step_data["id"], constants.LEN_LONG),
                     image_path=image_path,
                     image=image,
-                    actions=[
-                        get_act(di, d) for di, d in enumerate(step_data["actions"])
-                    ],
+                    actions=[get_act(di, d) for di, d in enumerate(step_data["actions"])],
                 )
             )
 
@@ -154,5 +153,27 @@ class TaskState(rx.State):
         self._load_steps(_raw_data["steps"])
         self.loaded = True
 
-    def update_id_status(self, status: str, task_id: str):
-        log.info(f"update: {task_id} to {status}  {self._update_status_hooks}")
+    def get_all_statusus(self, task_id: str):
+        with rx.session() as session:
+            statuses = session.exec(
+                TaskTable.select(TaskTable.status).where(TaskTable.task_id == task_id)
+            ).all()
+            log.info(f"statuses:\n{statuses}")
+        return statuses
+
+    def update_id_status(self, status_str: str, status_id: str, task_id: str = None):
+        log.info(f"update: {status_id} to {status_str}  {self._update_status_hooks}")
+        with rx.session() as session:
+            status = session.exec(
+                StatusTable.select().where((StatusTable.status_id == status_id))
+            ).first()
+
+            if not status:
+                log.info(f"status not found for {status_id}")
+                status = StatusTable(status_id=status_id, status_str=status, task_id=task_id)
+            else:
+                status.status_str = status_str
+
+            session.add(status)
+            session.commit()
+            log.info(f"status updated to {status}")

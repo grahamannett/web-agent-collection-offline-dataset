@@ -10,14 +10,14 @@ This is the refactored version of the original web annotation tool and clippy in
 
 # Plugins
 
-The way you integrate datasets/agents is now via a plugin system.  An example can be seen in `src/wac_lab/plugins/clippy.py` that uses a websocket to communicate with the clippy agent.
-
+The way you integrate datasets/agents is now via a plugin system. An example can be seen in `src/wac_lab/plugins/clippy.py` that uses a websocket to communicate with the clippy agent.
 
 # Example Dataset
 
 The full dataset will be available on huggingface, to use a small example until then use the following [tasks-examples.zip](https://github.com/user-attachments/files/16169267/tasks-examples.zip)
 
 Example usage:
+
 ```bash
 # assuming you are in the wac-agent-collection-offline-dataset directory
 wget https://github.com/user-attachments/files/16169267/tasks-examples.zip && unzip tasks-examples.zip
@@ -25,3 +25,12 @@ mkdir -p example-data && mv tasks-examples example-data/tasks
 
 DATA_DIR=$PWD/example-data pdm run app
 ```
+
+# layout
+
+- `src/wac_lab`
+  - web app
+- `src/wacommon`
+  - common code for the web app, plugins and offline dataset collection
+- `src/wac_plugins`
+  - plugins for the web app

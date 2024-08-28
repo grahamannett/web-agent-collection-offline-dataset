@@ -12,3 +12,5 @@ IMAGE_EXT = "png"
 # sorting options for index and sidebar
 SORT_OPTIONS = ["id", "status", "timestamp"]
 DEFAULT_SORT_BY = SORT_OPTIONS[0]
+
+database_path = os.environ.get("database_url")

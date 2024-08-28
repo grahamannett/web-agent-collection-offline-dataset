@@ -19,9 +19,7 @@ def task_delete_button(task_id: str = None) -> rx.Component:
                     rx.alert_dialog.cancel(
                         rx.button("Cancel"),
                     ),
-                    rx.alert_dialog.action(
-                        rx.button("Delete"), on_click=rx.redirect("/tasks")
-                    ),
+                    rx.alert_dialog.action(rx.button("Delete"), on_click=rx.redirect("/tasks")),
                     spacing="3",
                 ),
             ),
@@ -35,7 +33,7 @@ def task_status_buttons(task_id: str = "") -> rx.Component:
         return rx.button(
             status_str or status,
             style=styles.task_status_button_style,
-            on_click=lambda: TaskState.update_id_status(status, task_id),
+            on_click=lambda: TaskState.update_id_status(status, task_id, TaskState.id),
             **props,
         )
 
@@ -108,7 +106,7 @@ def step_status_change_buttons(task_step: TaskStepInfo) -> rx.Component:
     }
 
     def _on_click(status: str):
-        return TaskState.update_id_status(status, task_step.id)
+        return TaskState.update_id_status(status, task_step.id, TaskState.id)
 
     return rx.flex(
         rx.button("Approve", on_click=_on_click("Approve"), **_botton_props),

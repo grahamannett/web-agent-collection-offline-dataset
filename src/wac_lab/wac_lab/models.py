@@ -2,17 +2,15 @@ import reflex as rx
 import sqlmodel
 
 
-class Task(rx.Model, table=True):
+class TaskTable(rx.Model, table=True):
     objective: str
     task_id: str
 
-    statuses: list["Status"] = sqlmodel.Relationship(back_populates="task")
+    statuses: list["StatusTable"] = sqlmodel.Relationship(back_populates="tasktable")
 
 
-
-class Status(rx.Model, table=True):
+class StatusTable(rx.Model, table=True):
     status_id: str
-    state: str
+    status_str: str
 
-    task_id: str = sqlmodel.Field(foreign_key="task.task_id")
-
+    task_id: str = sqlmodel.Field(foreign_key="tasktable.task_id")

@@ -4,9 +4,12 @@
     description = "WACOFFDataset"
     authors = [{ name = "graham", email = "graham.annett@gmail.com" }]
     dependencies = [
+        "transformers @ git+https://github.com/huggingface/transformers.git",
         "reflex>=0.5.7",
         "pillow>=10.4.0",
         "wac-lab @ file:///${PROJECT_ROOT}/src/wac_lab",
+        "torch>=2.4.0",
+        "torchvision>=0.19.0",
     ]
     requires-python = ">=3.11"
     readme = "README.md"
@@ -32,3 +35,6 @@
     [tool.pdm.scripts]
         info = { cmd = "which reflex" }
         app = { cmd = "reflex run", working_dir = "src/wac_lab" }
+
+[tool.ruff]
+    line-length = 100

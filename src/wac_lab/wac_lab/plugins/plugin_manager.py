@@ -76,15 +76,23 @@ class PluginManager:
         return out
 
     @classmethod
-    def setup_plugins(cls, plugins: list[str, callable], wac_app):
+    def setup_plugins(cls, app: rx.App):
         import importlib
+
+        plugins = app.plugins
+
+        if not plugins:
+            raise ValueError("No plugins provided")
 
         for plugin in plugins:
             if isinstance(plugin, str):
                 plugin = importlib.import_module(plugin)
 
             if callable(plugin):
-                plugin(wac_app)
+                plugin(app)
+
+            if callable(setup_fn := getattr(plugin, "__setup__", None)):
+                setup_fn(app)
 
             cls.register(plugin)
 
@@ -95,10 +103,10 @@ class PluginManager:
 
         if name in PluginManager.plugins:
             raise ValueError(f"Plugin with name {name} already exists")
-        log.info(f"Registering plugin {name}")
 
         # use the instance, make this optional tho in future
         PluginManager.plugins[name] = plugin.__plugin__
+        log.rule(f"[cyan]{log.escape(f'PLUGIN:{name} ✅')}", align="left")
 
     def get_match_vals(self):
         return [(p_name, p.render()) for p_name, p in self.plugins.items()]

@@ -1,12 +1,11 @@
 import os
+from enum import StrEnum, auto
 from typing import List, Optional
 
 from rich.console import Console
+from rich.markup import escape  # noqa: F401
 from rich.progress import MofNCompleteColumn, Progress, TimeElapsedColumn
 from rich.prompt import Prompt
-
-from enum import StrEnum, auto
-
 
 """
 Alternatively just use
@@ -132,9 +131,7 @@ def warn(msg: str, _stack_offset: int = 3, **kwargs):
         kwargs: Keyword arguments to pass to the print function.
     """
     if LEVEL <= LogLevel.WARNING:
-        print(
-            f"[orange1]Warning: {msg}[/orange1]", _stack_offset=_stack_offset, **kwargs
-        )
+        print(f"[orange1]Warning: {msg}[/orange1]", _stack_offset=_stack_offset, **kwargs)
 
 
 def deprecate(
@@ -172,9 +169,7 @@ def error(msg: str, _stack_offset: int = 3, **kwargs):
         print(f"[red]{msg}[/red]", _stack_offset=_stack_offset, **kwargs)
 
 
-def ask(
-    question: str, choices: Optional[List[str]] = None, default: Optional[str] = None
-) -> str:
+def ask(question: str, choices: Optional[List[str]] = None, default: Optional[str] = None) -> str:
     """Takes a prompt question and optionally a list of choices
      and returns the user input.
 

@@ -59,7 +59,7 @@ class ClippyPlugin(Plugin):
         return rx.box(
             rx.heading("Setup Clippy Plugin"),
             rx.input(placeholder="Enter task", on_change=PluginState.set_task),
-            rx.button("Generate Task From LLM", on_click=PluginState.llm_gen_tasks),
+            rx.button("Generate-LLM", on_click=PluginState.llm_gen_tasks),
             rx.foreach(PluginState.generated_tasks, rx.button),
         )
 
