@@ -1,6 +1,5 @@
-from PIL import Image
 import reflex as rx
-from wac_lab.datatypes import approval_status
+from PIL import Image
 
 
 class StepActionInfo(rx.Base):
@@ -18,7 +17,9 @@ class TaskStepInfo(rx.Base):
     image_path: str = ""
     image: Image.Image = None
 
-    status: approval_status._ApprovalStatus = approval_status.Approved
+    status_name: str = ""
+    status_emoji: str = ""
+    status_color: str = ""
 
     actions: list[StepActionInfo] = ""
 

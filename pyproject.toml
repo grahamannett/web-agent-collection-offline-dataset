@@ -32,9 +32,29 @@
         # Define your packages with the path to the sources
         packages = [{ include = "wac_lab", from = "src/wac_lab" }]
 
-    [tool.pdm.scripts]
+    [tool.pdm.scripts] # NOTE: prefer using mise for running scripts
         info = { cmd = "which reflex" }
         app = { cmd = "reflex run", working_dir = "src/wac_lab" }
 
 [tool.ruff]
-    line-length = 100
+    line-length = 120
+
+    [tool.ruff.lint]
+        select = [
+            # Pyflakes
+            "F",
+            # Pycodestyle
+            "E",
+            "W",
+            # isort
+            "I001",
+        ]
+        # ignore __init__ for import error
+        [tool.ruff.lint.per-file-ignores]
+            "__init__.py" = ["F401"]
+
+        [tool.ruff.lint.isort]
+            known-first-party = ["wac_lab", "wacommon"]
+
+            # lines-between-types = 1
+            lines-after-imports = 2

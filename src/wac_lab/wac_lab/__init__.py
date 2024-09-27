@@ -1,0 +1,1 @@
+from wacommon import log

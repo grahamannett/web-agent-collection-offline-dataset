@@ -1,14 +1,15 @@
 from typing import NamedTuple
 
 
-class _ApprovalStatus(NamedTuple):
+class ApprovalStatus(NamedTuple):
+    name: str
     color: str
     emoji: str
 
 
-Approved = _ApprovalStatus("green", "✅")
-Rejected = _ApprovalStatus("red", "❌")
-Running = _ApprovalStatus("purple", "🏃🏻‍♀️")
-Pending = _ApprovalStatus("orange", "👾")
+Approved = ApprovalStatus("approved", "green", "✅")
+Rejected = ApprovalStatus("rejected", "red", "❌")
+Running = ApprovalStatus("running", "purple", "🏃🏻‍♀️")
+Pending = ApprovalStatus("pending", "orange", "👾")
 
 DefaultStatus = Pending
