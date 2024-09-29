@@ -1,0 +1,44 @@
+[env]
+    _.file = "secrets.env.toml"
+
+    DATA_DIR = "~/code/clippy/data"
+
+    DB_URL = "sqlite:///reflex.db"
+    PROJECT_DIR = "{{ config_root }}"
+    # database_url = "sqlite:///.db/db.sqlite3" # db_url="sqlite:///reflex.db",
+
+    # python specific
+    _.python.venv.path = "/Users/graham/code/web-agent-collection-offline-dataset/.venv"
+    _.python.venv.create = true
+
+
+[tasks.app]
+    description = 'Build the CLI'
+    run = "reflex run"
+    alias = 'a'                   # `mise run b`
+    dir = "src/wac_lab"           # "{{cwd}}"               # run in user's cwd, default is the project's base directory
+
+[tasks."db:clean"]
+    description = 'Clean the database'
+    run = [
+        "cd $PROJECT_DIR/src/wac_lab && trash reflex.db alembic.ini alembic/",
+    ]
+
+[tasks."db:init"]
+    description = 'Setup the database'
+    run = ["cd $PROJECT_DIR/src/wac_lab && reflex db init"]
+
+[tasks."db:reset"]
+    description = 'Reset the database'
+    depends = ["db:clean", "db:init"]
+    run = ["cd $PROJECT_DIR/src/wac_lab && reflex db reset"]
+
+[tasks."db:migrate"]
+
+    # -- then run like: reflex db makemigrations --message $1
+    description = 'Migrate the database'
+    run = [
+        "echo doing migrate with message $1 ",
+        "cd $PROJECT_DIR/src/wac_lab",         #  && reflex db migrate",
+        # then run like: reflex db makemigrations --message $1
+    ]

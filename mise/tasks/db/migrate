@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-# mise alias="mdb"
-# mise dir="src/wac_lab"
-
-echo "doing migrate with message" $1
-# -- then run like: reflex db makemigrations --message $1

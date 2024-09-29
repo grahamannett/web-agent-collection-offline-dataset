@@ -1,0 +1,5 @@
+[tasks.dbinit]
+    description = 'Setup the database'
+    run = ["echo 'in this' && echo $PWD"]
+    # run = ["echo 'in this'"] # && echo $PWD"]
+    dir = "$config_root | basename }}"

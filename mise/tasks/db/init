@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-# mise description="setup the database"
-# mise alias="sdb"
-# mise dir="src/wac_lab"
-
-reflex db init
