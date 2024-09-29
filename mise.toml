@@ -13,10 +13,10 @@
 
 
 [tasks.app]
-    description = 'Build the CLI'
+    description = 'run the app'
     run = "reflex run"
-    alias = 'a'                   # `mise run b`
-    dir = "src/wac_lab"           # "{{cwd}}"               # run in user's cwd, default is the project's base directory
+    alias = 'a'
+    dir = "src/wac_lab"
 
 [tasks."db:clean"]
     description = 'Clean the database'
@@ -34,7 +34,6 @@
     run = ["cd $PROJECT_DIR/src/wac_lab && reflex db reset"]
 
 [tasks."db:migrate"]
-
     # -- then run like: reflex db makemigrations --message $1
     description = 'Migrate the database'
     run = [
