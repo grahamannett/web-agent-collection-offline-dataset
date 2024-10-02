@@ -6,6 +6,12 @@ This is the refactored version of the original web annotation tool and clippy in
 
 ![wac-start](docs/assets/wac-lab-start.jpeg)
 
+# Example of Manual Trajectory Collection:
+
+https://github.com/grahamannett/clippy/assets/7343667/5c904fb5-1fd8-43fa-9085-63e08271a993
+
+Video is from prior repo, need to update this video such that it is using restyled app.
+
 # To use
 
 # Plugins
