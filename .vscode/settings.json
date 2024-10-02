@@ -1,3 +1,3 @@
 {
-  "python.analysis.extraPaths": ["./src/wac_lab", "./src/wac_plugins"]
+  "python.analysis.extraPaths": ["./src/wac_plugins", "./src/wac_lab_app"]
 }

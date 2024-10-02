@@ -1,15 +1,14 @@
 import reflex as rx
 
-from wac_lab.external_tools.generate import generate_objective
-from wac_lab.plugins.plugin_manager import Plugin
-from wac_lab.templates.template import plugin_route
+# from wac_lab.external_tools.generate import generate_objective
+# from wac_lab.templates.template import plugin_route
+from wac_lab.plugins.plugin_manager import Plugin, RenderableInterface
 
 
 """
 clippy is the plugin that is used to laugh playwright
 
 """
-
 from .adapters.ws_conn import ConnectionManager
 
 
@@ -31,7 +30,7 @@ class PluginState(rx.State):
         # self.generated_tasks = generate_from_cohere()
 
 
-class ClippyPlugin(Plugin):
+class ClippyPlugin(Plugin, RenderableInterface):
     plugin_name: str = "clippy_plugin"
     base_text_val = "nada"
 

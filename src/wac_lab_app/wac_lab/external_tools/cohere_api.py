@@ -5,17 +5,18 @@ import requests
 from wacommon import log
 
 
+cohere_api_key = os.getenv("COHERE_KEY")
+cohere_url = "https://api.cohere.com"
+
 # simple prompt to generate tasks for time being
-prompt = """Give examples of similar web tasks.  These tasks should be objectives that are completable online by an average human and require no further instruction. Only return the tasks with a new one on each line no additional output.
+prompt_for_generate = """Give examples of similar web tasks.  These tasks should be objectives that are completable online by an average human and require no further instruction. Only return the tasks with a new one on each line no additional output.
 ---
 Look up recipes for Sachertorte.
 Convert 100 GBP to AUD for a vacation budget.
 What is the etymology of the word "serendipity"."""
 
-# prompt = "Please explain to me how LLMs work"
 
-cohere_api_key = os.getenv("COHERE_KEY")
-cohere_url = "https://api.cohere.com"
+model_name_for_generate = "command-r-plus"
 
 
 def _parse_v1_chat_resp(response: dict):
@@ -51,10 +52,11 @@ def _parse_v1_generate_resp(response: dict):
 
 
 def generate_from_cohere(
-    model_name: str = "command-r-plus",
+    model_name: str = model_name_for_generate,
+    prompt: str = prompt_for_generate,
     temperature: float = 0.6,
-    prompt: str = prompt,
     endpoint: str = "v1/chat",
+    **kwargs,
 ):
     endpoint_parser = {
         "v1/chat": _parse_v1_chat_resp,

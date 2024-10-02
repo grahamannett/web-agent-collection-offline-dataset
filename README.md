@@ -40,3 +40,10 @@ DATA_DIR=$PWD/example-data pdm run app
   - common code for the web app, plugins and offline dataset collection
 - `src/wac_plugins`
   - plugins for the web app
+
+
+
+# dev setup
+
+to dev setup, use pdm/uv.  There is probably a better folder layout structure as I want to have the plugins separate from the main app. Use `pip install -e src/wac_lab_app` to allow the app to be importable from either `wac_lab` or `wac_lab_app`
+

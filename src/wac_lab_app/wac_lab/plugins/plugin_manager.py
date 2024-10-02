@@ -54,6 +54,8 @@ class Plugin:
             return cls(*args, **kwargs)
         return cls
 
+
+class RenderableInterface:
     def render(self, view: str = "home", *args, **kwargs):
         method = getattr(self, view, None)
         if not method:

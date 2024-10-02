@@ -174,3 +174,4 @@ src/wac_lab/pyproject.toml
 src/wac_lab/requirements.txt
 
 secrets.env.toml
+**/uv.lock
