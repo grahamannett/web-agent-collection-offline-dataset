@@ -1,7 +1,9 @@
 import reflex as rx
+
 from wac_lab.external_tools.generate import generate_objective
 from wac_lab.plugins.plugin_manager import Plugin
 from wac_lab.templates.template import plugin_route
+
 
 """
 clippy is the plugin that is used to laugh playwright

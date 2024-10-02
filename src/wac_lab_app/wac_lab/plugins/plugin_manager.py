@@ -1,5 +1,7 @@
 import reflex as rx
-from wacommon import log
+
+from wac_lab import log
+
 
 PLUGINS_SUBCLASSED = []
 PLUGINS_INITIATED = []
@@ -59,9 +61,7 @@ class Plugin:
         return method(*args, **kwargs)
 
     def home(self) -> rx.Component:
-        raise NotImplementedError(
-            "Each plugin must implement a 'home' method returning a Reflex component."
-        )
+        raise NotImplementedError("Each plugin must implement a 'home' method returning a Reflex component.")
 
 
 class PluginManager:
@@ -102,7 +102,8 @@ class PluginManager:
             name, _ = _get_plugin_name(plugin)
 
         if name in PluginManager.plugins:
-            raise ValueError(f"Plugin with name {name} already exists")
+            # raise ValueError(f"Plugin with name {name} already exists")
+            log.error(f"Plugin with name {name} already exists: {PluginManager.plugins[name]}")
 
         # use the instance, make this optional tho in future
         PluginManager.plugins[name] = plugin.__plugin__

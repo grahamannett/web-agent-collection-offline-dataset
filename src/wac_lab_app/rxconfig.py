@@ -1,9 +1,10 @@
-import os
 import reflex as rx
+
+from wac_lab import constants
 
 
 class DBConfig:
-    db_url: str = os.environ.get("DB_URL")  # "sqlite:///reflex.db"
+    db_url: str = constants.DB_URL
 
 
 class WacLabConfig(rx.Config, DBConfig):

@@ -1,7 +1,9 @@
 import os
 
 import requests
+
 from wacommon import log
+
 
 # simple prompt to generate tasks for time being
 prompt = """Give examples of similar web tasks.  These tasks should be objectives that are completable online by an average human and require no further instruction. Only return the tasks with a new one on each line no additional output.

@@ -1,0 +1,14 @@
+[build-system]
+    requires = ["setuptools>=45", "setuptools_scm[toml]>=6.2"]
+    build-backend = "setuptools.build_meta"
+
+[project]
+    name = "wac_lab"
+    version = "0.0.0"
+    dynamic = ["dependencies"]
+
+[tool.setuptools]
+    packages = ["wac_lab"]
+
+    [tool.setuptools.dynamic]
+        dependencies = { file = ["requirements.txt"] }

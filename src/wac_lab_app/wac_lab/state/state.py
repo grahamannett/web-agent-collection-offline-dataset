@@ -6,7 +6,8 @@ from sqlmodel import SQLModel, select
 
 from wac_lab import constants, log
 from wac_lab.common.file_utils import get_tasks, load_task_json_file, truncate_string
-from wac_lab.datatypes import approval_status, task_types
+from wac_lab.datatypes.approval_status import ApprovalStatus, DefaultStatus
+from wac_lab.datatypes.task_types import StepActionInfo, TaskStepInfo
 from wac_lab.models import StatusTable, TaskTable
 from wac_lab.plugins.plugin_manager import PluginManager
 
@@ -79,7 +80,7 @@ class TaskState(rx.State):
     timestamp: str = ""
     timestamp_short: str = ""
 
-    steps: list[dict | task_types.TaskStepInfo] = []
+    steps: list[dict | TaskStepInfo] = []
 
     _update_status_hooks: list[callable] = []
 
@@ -97,7 +98,7 @@ class TaskState(rx.State):
 
     @rx.var
     def status(self) -> str:
-        return approval_status.DefaultStatus.emoji
+        return DefaultStatus.emoji
 
     def _setup_id(self, task_id: str) -> None:
         self.id = task_id
@@ -121,7 +122,7 @@ class TaskState(rx.State):
                 action_value = f'"{d["value"]}"'
                 clean_value = "type " + action_value
 
-            return task_types.StepActionInfo(
+            return StepActionInfo(
                 action_idx=d_idx,
                 action_type=d["action_type"],
                 action_value=action_value,
@@ -134,8 +135,9 @@ class TaskState(rx.State):
             image = Image.open(image_path)
             image_size: tuple[int, int] = image.size
             image = image.crop((0, 0, image_size[0], min(image_size[1], constants.IMAGE_STEP_HEIGHT)))
-            status_name, status_emoji, status_color = self._status_info(step_data["id"])
-            task_step_info = task_types.TaskStepInfo(
+            status_info = self.get_status_info(step_data["id"])
+
+            task_step_info = TaskStepInfo(
                 step_idx=step_idx,
                 url=step_data["url"],
                 id=step_data["id"],
@@ -145,25 +147,32 @@ class TaskState(rx.State):
                 image=image,
                 actions=[get_act(di, d) for di, d in enumerate(step_data["actions"])],
                 # get status from db
-                status_name=status_name,
-                status_emoji=status_emoji,
-                status_color=status_color,
+                status_name=status_info.name,
+                status_emoji=status_info.emoji,
+                status_color=status_info.color,
             )
 
             self.steps.append(task_step_info)
 
-    def _status_info(self, status_id: str) -> list[tuple[str, str, str]]:
-        log.info(f"getting status for: {status_id}")
+    def get_status_info(self, status_id: str) -> ApprovalStatus:
+        """
+        Retrieve approval status information for a given status ID.
+
+        Args:
+            status_id (str): The ID of the status to retrieve.
+
+        Returns:
+            approval_status.ApprovalStatus: The approval status information.
+        """
+
         with rx.session() as session:
             query = select(StatusTable).where(StatusTable.status_id == status_id)
-            statuses = session.exec(query).all()
+            status_info = session.exec(query).first()
 
-        if not statuses:
-            return [(approval_status.DefaultStatus.name,
-                     approval_status.DefaultStatus.emoji,
-                     approval_status.DefaultStatus.color)]
+        if not status_info:
+            status_info = DefaultStatus
 
-        return [(status.name, status.emoji, status.color) for status in statuses]
+        return status_info
 
     def load_task(self):
         _raw_data = load_task_json_file(filepath=self.task_filepath)
@@ -179,42 +188,18 @@ class TaskState(rx.State):
             log.info(f"statuses:\n{statuses}")
         return statuses
 
-    # def get_status_str(self, status_id: str):
-    #     log.info(f"getting status for {status_id}")
-    #     return "approved!"
-
-    def upsert_any(self, table: type[SQLModel], data: SQLModel, match_field: str):
-        with rx.session() as session:
-            # Check if the data already exists in the table
-            stmt = table.select().where(getattr(table, match_field) == getattr(data, match_field))
-            result = session.exec(stmt).first()
-
-            if result:
-                # Update the existing data
-                for key, value in data.dict().items():
-                    setattr(result, key, value)
-            else:
-                # Insert the new data
-                session.add(data)
-
-            session.commit()
-        return result
-
-    def update_id_status_(self, status_id: str, status_str: str):
-        data = StatusTable(status_id=status_id, status_str=status_str)
-        result = self.upsert_any(StatusTable, data, "status_id")
-
     def update_id_status(self, status_str: str, status_id: str):
-        log.info(f"update: {status_id} to {status_str}  {self._update_status_hooks}")
+        log.info(f"update: {status_id} to {status_str} {self._update_status_hooks}")
         with rx.session() as session:
-            status = session.exec(StatusTable.select().where((StatusTable.status_id == status_id))).first()
+            query = select(StatusTable).where(StatusTable.status_id == status_id)
+            status_info = session.exec(query).first()
 
-            if not status:
-                log.info(f"status not found for {status_id}")
-                status = StatusTable(status_id=status_id, status_str=status_str)
+            if status_info:
+                status_info.status = ApprovalStatus[status_str.upper()]
+                log.info(f"status updated to `{status_info.status.name}`")
             else:
-                status.status_str = status_str
+                status_info = StatusTable(status_id=status_id, status=ApprovalStatus[status_str.upper()])
+                session.add(status_info)
 
-            session.add(status)
             session.commit()
-            log.info(f"status updated to `{status.status_str}`")
+        return status_info

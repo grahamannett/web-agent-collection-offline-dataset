@@ -1,8 +1,10 @@
 import unittest
+from threading import Thread
+
 from fastapi import FastAPI, WebSocket
 from fastapi.testclient import TestClient
-from threading import Thread
 from wac_plugins.clippy.clippy import ConnectionManager, websocket_endpoint
+
 
 app = FastAPI()
 app.websocket_route("/ws/{client_id}")(websocket_endpoint)
